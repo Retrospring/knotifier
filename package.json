@@ -1,0 +1,24 @@
+{
+  "name": "retrospring-knotify",
+  "version": "0.0.0",
+  "description": "WebSocket/Redis Subscriber",
+  "main": "knotify.coffee",
+  "scripts": {
+    "test": "exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Retrospring/knotifier.git"
+  },
+  "author": "nilsding",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Retrospring/knotifier/issues"
+  },
+  "homepage": "https://github.com/Retrospring/knotifier",
+  "dependencies": {
+    "coffee-script": "^1.9.2",
+    "nodejs-websocket": "^1.2.1",
+    "redis": "^0.12.1"
+  }
+}
