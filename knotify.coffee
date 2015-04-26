@@ -32,20 +32,20 @@ server = ws.createServer (conn) ->
         when "auth" then
           knotify.key = "notifications.#{json.key}-#{json.id}"
           knotify.subscribe knotify.key
-          conn.sendText JSON.stringify {success: true, reason: "bound to notificatoins", status: "BOUND"}
+          conn.sendText JSON.stringify {token: json.token, success: true, reason: "bound to notificatoins", status: "BOUND"}
         when "subscribe" then
           knotify.subscribe "user.#{json.id}"
-          conn.sendText JSON.stringify {success: true, reason: "bound to target", status: "BOUND"}
+          conn.sendText JSON.stringify {token: json.token, success: true, reason: "bound to target", status: "BOUND"}
         when "logout" then
           if knotify.key === undefined
-            conn.sendText JSON.stringify {success: false, reason: "login first", status: "NEEDS_AUTH"}
+            conn.sendText JSON.stringify {token: json.token, success: false, reason: "login first", status: "NEEDS_AUTH"}
           else
             knotify.unsubscribe knotify.key
             knotify.key = undefined
-            conn.sendText JSON.stringify {success: true, reason: "bye", status: "BYE"}
+            conn.sendText JSON.stringify {token: json.token, success: true, reason: "bye", status: "BYE"}
         when "unsubscribe" then
           knotify.unsubscribe "user.#{json.id}"
-          conn.sendText JSON.stringify {success: true, reason: "unbound target", status: "UNBOUND"}
+          conn.sendText JSON.stringify {token: json.token, success: true, reason: "unbound target", status: "UNBOUND"}
     catch e
       # whoops
 
