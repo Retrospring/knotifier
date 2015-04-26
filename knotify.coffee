@@ -54,7 +54,7 @@ server = ws.createServer (conn) ->
 server.listen port, hostname
 
 # client side
-# var socket = new WebSocket "ws://#{port}:#{hostname}"
+# var socket = new WebSocket "ws://#{hostname}:#{port}"
 # socket.onmessage = (event) ->
 #   data = JSON.parse event
 #   # process data, pipe it to an eventmachine, whatever.
