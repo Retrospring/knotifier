@@ -41,6 +41,7 @@ server = ws.createServer (conn) ->
             conn.sendText JSON.stringify {success: false, reason: "login first", status: "NEEDS_AUTH"}
           else
             knotify.unsubscribe knotify.key
+            knotify.key = undefined
             conn.sendText JSON.stringify {success: true, reason: "bye", status: "BYE"}
         when "unsubscribe" then
           knotify.unsubscribe "user.#{json.id}"
