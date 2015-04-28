@@ -31,7 +31,7 @@ class KNotify
     $this = this
     @client.on "message", (chan, message) ->
       try
-        $this.conn.sendText JSON.stringify {channel: chan, data: JSON.parse message}
+        $this.conn.sendText message
       catch e
         # nothing
     @key = undefined
