@@ -11,10 +11,13 @@ hostname    = process.env.KNOTIFIER_HOST || KNOTIFIER_DEFAULT_HOST
 class KNotify
   constructor: (@conn) ->
     @client = redis.createClient()
+    $this = this
     @client.on "message", (chan, message) ->
-      @conn.sendText JSON.stringify {channel: chan, data: JSON.parse message}
+      console.log chan, ">>>>", message
+      $this.conn.sendText JSON.stringify {channel: chan, data: JSON.parse message}
     @key = undefined
   subscribe: (channel) ->
+    console.log "SUB", "<<<<", channel
     @client.subscribe channel
   unsubscribe: (channel) ->
     @client.unsubscribe channel
@@ -29,23 +32,23 @@ server = ws.createServer (conn) ->
     try
       json = JSON.parse str
       switch json.method
-        when "auth" then
-          knotify.key = "notifications.#{json.key}-#{json.id}"
+        when "auth"
+          knotify.key = "notifications-#{json.key}-#{json.id}"
           knotify.subscribe knotify.key
-          conn.sendText JSON.stringify {token: json.token, success: true, reason: "bound to notificatoins", status: "BOUND"}
-        when "subscribe" then
-          knotify.subscribe "user.#{json.id}"
-          conn.sendText JSON.stringify {token: json.token, success: true, reason: "bound to target", status: "BOUND"}
-        when "logout" then
-          if knotify.key === undefined
-            conn.sendText JSON.stringify {token: json.token, success: false, reason: "login first", status: "NEEDS_AUTH"}
+          knotify.conn.sendText JSON.stringify {token: json.token, success: true, reason: "bound to #{knotify.key}", status: "BOUND"}
+        when "subscribe"
+          knotify.subscribe "user-#{json.id}"
+          knotify.conn.sendText JSON.stringify {token: json.token, success: true, reason: "bound to user-#{json.id}", status: "BOUND"}
+        when "logout"
+          if knotify.key == undefined
+            knotify.conn.sendText JSON.stringify {token: json.token, success: false, reason: "login first", status: "NEEDS_AUTH"}
           else
             knotify.unsubscribe knotify.key
             knotify.key = undefined
-            conn.sendText JSON.stringify {token: json.token, success: true, reason: "bye", status: "BYE"}
-        when "unsubscribe" then
+            knotify.conn.sendText JSON.stringify {token: json.token, success: true, reason: "bye", status: "BYE"}
+        when "unsubscribe"
           knotify.unsubscribe "user.#{json.id}"
-          conn.sendText JSON.stringify {token: json.token, success: true, reason: "unbound target", status: "UNBOUND"}
+          knotify.conn.sendText JSON.stringify {token: json.token, success: true, reason: "unbound target", status: "UNBOUND"}
     catch e
       # whoops
 
