@@ -18,6 +18,7 @@
   "homepage": "https://github.com/Retrospring/knotifier",
   "dependencies": {
     "coffee-script": "^1.9.2",
+    "js-yaml": "^3.3.0",
     "nodejs-websocket": "^1.2.1",
     "redis": "^0.12.1"
   }

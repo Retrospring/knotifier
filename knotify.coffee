@@ -1,16 +1,33 @@
 #!/usr/bin/env coffee
 redis     = require 'redis'
 ws        = require 'nodejs-websocket'
+yaml      = require 'js-yaml'
+fs        = require 'fs'
+path      = require 'path'
+urlparse  = require('url').parse
 
 KNOTIFIER_DEFAULT_PORT = 34569
 KNOTIFIER_DEFAULT_HOST = '127.0.0.1'
 
 port        = process.env.KNOTIFIER_PORT || KNOTIFIER_DEFAULT_PORT
 hostname    = process.env.KNOTIFIER_HOST || KNOTIFIER_DEFAULT_HOST
+CONFIG_FILE = path.resolve((process.env.RAILS_ROOT || path.resolve(__dirname, "../")), "config", "justask.yml")
+REDIS_URL   = "redis://localhost:6379"
+
+if fs.existsSync CONFIG_FILE
+  try
+    yml = yaml.safeLoad fs.readFileSync CONFIG_FILE, 'utf8'
+    REDIS_URL = yml.redis_url || REDIS_URL
+  catch e
+    # nothing
+
+REDIS_URL  = urlparse REDIS_URL
+REDIS_HOST = REDIS_URL.hostname
+REDIS_PORT = parseInt REDIS_URL.port
 
 class KNotify
   constructor: (@conn) ->
-    @client = redis.createClient()
+    @client = redis.createClient REDIS_PORT, REDIS_HOST, {}
     $this = this
     @client.on "message", (chan, message) ->
       console.log chan, ">>>>", message
