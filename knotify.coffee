@@ -30,7 +30,10 @@ class KNotify
     @client = redis.createClient REDIS_PORT, REDIS_HOST, {}
     $this = this
     @client.on "message", (chan, message) ->
-      $this.conn.sendText JSON.stringify {channel: chan, data: JSON.parse message}
+      try
+        $this.conn.sendText JSON.stringify {channel: chan, data: JSON.parse message}
+      catch e
+        # nothing
     @key = undefined
   subscribe: (channel) ->
     @client.subscribe channel
@@ -68,9 +71,15 @@ server = ws.createServer (conn) ->
       # whoops
 
   conn.on "close", (code, reason) ->
-    knotify.close
+    knotify.close()
+
+  conn.on "error", ->
+    knotify.close()
 
 server.listen port, hostname
+
+process.on "uncaughtException", (err) ->
+  console.error err
 
 # client side
 # var socket = new WebSocket "ws://#{hostname}:#{port}"
