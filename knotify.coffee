@@ -30,11 +30,9 @@ class KNotify
     @client = redis.createClient REDIS_PORT, REDIS_HOST, {}
     $this = this
     @client.on "message", (chan, message) ->
-      console.log chan, ">>>>", message
       $this.conn.sendText JSON.stringify {channel: chan, data: JSON.parse message}
     @key = undefined
   subscribe: (channel) ->
-    console.log "SUB", "<<<<", channel
     @client.subscribe channel
   unsubscribe: (channel) ->
     @client.unsubscribe channel
