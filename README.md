@@ -1,4 +1,4 @@
-# knotifier
+# knotifier [![Build Status](https://travis-ci.org/Retrospring/knotifier.svg)](https://travis-ci.org/Retrospring/knotifier)
 
 Depends on something to push data to redis' pub/sub on the convention of of the following channels: ``notifications.GENERATED_KEY-OWNER_ID`` and ``user.USER_ID``
 
