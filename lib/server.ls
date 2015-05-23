@@ -36,18 +36,18 @@ server = ws.create-server (connection) ->
         console.error e.stack.join \\n
 
   connection.on \close, (code, reason) ->
-    if env.quiet?
+    unless env.quiet
       console.log connection, "closed", code, reason
     knotify.close!
 
   connection.on \error, ->
-    if env.quiet?
+    unless env.quiet
       console.log connection, "errored", arguments
     knotify.close!
 
 server.listen env.ws.port, env.ws.hostname
 
 process.on \uncaughtException, (error) ->
-  return void unless env.quiet?
+  return void if env.quiet
   console.error "uncaughtException:", error.message
   console.error error.stack.join \\n
