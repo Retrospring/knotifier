@@ -3,12 +3,11 @@ require! './env'
 module.exports = class KNotify
   (@connection) ->
     @client = @connect!
-    $this   = @
-    @client.on \message, (channel, message) ->
+    @client.on \message, (channel, message) ~>
       if env.debug
         console.log "redis  >>>>", channel, message
       try
-        $this.connection.send-text message
+        @connection.send-text message
       catch e
         unless env.quiet
           console.error e.message
