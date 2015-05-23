@@ -29,7 +29,7 @@ env.quiet = program.quiet?
 env.debug = program.debug?
 
 if program.rails?
-  env.justask = progarm.rails
+  env.justask = program.rails
 env.justask = path.resolve env.justask, 'config', 'justask.yml'
 
 try
