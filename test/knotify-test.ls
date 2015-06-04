@@ -7,7 +7,7 @@ expect = chai.expect
 
 class ConnectionMock
   (@callback = ->) ->
-  send-text: (text) ->
+  send: (text) ->
     @callback text
     text
 
@@ -20,7 +20,7 @@ describe 'knotify' ->
     expect test .to.equal '{"token":"abc","success":true,"status":"TEST","reason":"this is a test"}'
     knotify.close!
 
-  _it 'should get a redis message', (done) ->
+  _it 'should get a redis message', (done) !->
     mock = new ConnectionMock (message) ->
       expect message .to.equal "test"
       knotify.close!

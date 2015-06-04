@@ -7,8 +7,8 @@ module.exports = class KNotify
       if env.debug
         console.log "redis  >>>>", channel, message
       try
-        @connection.send-text message
-      catch e
+        @connection.send message
+      catch
         unless env.quiet
           console.error e.message
           console.error e.stack.join \\n
@@ -28,12 +28,17 @@ module.exports = class KNotify
     "notifications-#{@auth.key}-#{@auth.id}"
   send: (token, success, status, reason) ->
     json = JSON.stringify do
-      token: token or ""
+      token:   token   or ""
       success: success or false
-      status: status or "UNEXPECTED"
-      reason: reason or "No reason given"
+      status:  status  or "UNEXPECTED"
+      reason:  reason  or "No reason given"
     if env.debug
       console.log "websock>>>>", json
-    @connection.send-text json
+    try
+      @connection.send json
+    catch
+      unless env.quiet
+        console.error e.message
+        console.error e.stack.join \\n
   close: ->
     @client.quit!

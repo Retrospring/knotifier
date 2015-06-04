@@ -1,11 +1,25 @@
 require! './env'
-require! 'nodejs-websocket': \ws
+require! \ws
+require! \querystring
 require! './knotify': \KNotify
 
-server = ws.create-server (connection) ->
+wss = new ws.Server do
+  port: env.ws.port
+  host: env.ws.hostname
+
+wss.on \connection, (connection) ->
   knotify = new KNotify connection
-  
-  connection.on \text, (string) ->
+
+  # ws://host/any-path?key=:key&id=:id
+  req = connection.upgrade-req
+  if req? and req.url?
+    qs = querystring.parse req.url.substr req.url.index-of('?') + 1
+    if qs.id? and qs.key?
+      knotify.store-auth qs.key, qs.id
+      knotify.subscribe knotify.auth-channel!
+      knotify.send 'KNOTIFY', true, \BOUND, "bound to #{knotify.auth-channel!}"
+
+  connection.on \message, (string) ->
     if env.debug
       console.log "<<<<websock", string
     try
